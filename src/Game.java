@@ -19,11 +19,15 @@ public class Game {
             System.out.println("----- Bölgeler ------");
             System.out.println();
             System.out.println("1 - Güvenli Ev --> Burası sizin için güvenli bir ev, düşman yoktur !");
-            System.out.println("2 - Mağaza -- > Buradan silah veya zırh satın alabilirsiniz !");
+            System.out.println("2 - Mağaza --> Buradan silah veya zırh satın alabilirsiniz !");
+            System.out.println("0 - Çıkış Yap --> Oyunu Sonlandır !");
             System.out.print("Lütfen gitmek istediğiniz bölgeyi seçiniz : ");
             int selectLoc = input.nextInt();
 
             switch (selectLoc) {
+                case 0:
+                    location = null;
+                    break;
                 case 1:
                     location = new SafeHouse(player);
                     break;
@@ -32,6 +36,11 @@ public class Game {
                     break;
                 default:
                     location = new SafeHouse(player);
+            }
+
+            if (location == null){
+                System.out.println("Oyun Sonlandırıldı !!");
+                break;
             }
 
             if(!location.onLocation()){
