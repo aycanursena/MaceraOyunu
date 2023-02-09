@@ -20,20 +20,54 @@ public class BattleLoc extends Location{
         System.out.println("Dikkatli Ol! Burada " + obsNumber + " tane " +
                 this.getObstacle().getName() + " yaşıyor...");
         System.out.println("<S>avaş veya <K>aç");
-        String selectCase = input.nextLine();
-        selectCase = selectCase.toUpperCase();
+        String selectCase = input.nextLine().toUpperCase();
         if (selectCase.equals("S")){
-
+            if(combat(obsNumber)){
+                System.out.println(this.getName() + " tüm düşmanları yendiniz !");
+                return true;
+            }
+        }
+        if(this.getPlayer().getHealth() < 0){
+            System.out.println("Öldünüz !");
+            return false;
         }
         return true;
     }
 
     public boolean combat(int obsNumber){
         for(int i = 1; i <= obsNumber; i++){
+            this.getObstacle().setHealth(this.getObstacle().getOrijinalHealth());
             playerStats();
             obstacleStats();
+            while ((this.getPlayer().getHealth() > 0) && (this.getObstacle().getHealth() > 0)){
+                System.out.println("<V>ur veya <K>aç");
+                String selectCombat = input.nextLine().toUpperCase();
+                if(selectCombat.equals("V")){
+                    System.out.println("Siz vurdunuz !");
+                    this.getObstacle().setDamage(this.getObstacle().getHealth() -
+                                this.getPlayer().getTotalDamage());
+                    afterHit();
+                    if (this.getObstacle().getHealth() > 0){
+                        System.out.println("Canavar size vurdu !");
+                        int obstacleDamage = this.getObstacle().getDamage() -
+                                this.getPlayer().getInventory().getArmor().getBlock();
+                        if (obstacleDamage < 0){
+                            obstacleDamage = 0;
+                        }
+                        this.getPlayer().setHealth(this.getPlayer().getHealth() -
+                                obstacleDamage);
+                        afterHit();
+                    }
+                }
+            }
         }
         return false;
+    }
+
+    public void afterHit(){
+        System.out.println("Canınız : " + this.getPlayer().getHealth());
+        System.out.println(this.getObstacle().getName() + " canı : " + this.getObstacle().getHealth());
+        System.out.println("-----------------------------");
     }
 
     public void playerStats(){
@@ -46,6 +80,7 @@ public class BattleLoc extends Location{
         System.out.println("Zırh  " + this.getPlayer().getInventory().getArmor().getName());
         System.out.println("Bloklama : " + this.getPlayer().getInventory().getArmor().getBlock());
         System.out.println("Para : " + this.getPlayer().getMoney());
+        System.out.println();
     }
 
     public void obstacleStats(){
