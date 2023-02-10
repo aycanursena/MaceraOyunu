@@ -21,13 +21,11 @@ public class BattleLoc extends Location{
                 this.getObstacle().getName() + " yaşıyor...");
         System.out.println("<S>avaş veya <K>aç");
         String selectCase = input.nextLine().toUpperCase();
-        if (selectCase.equals("S")){
-            if(combat(obsNumber)){
-                System.out.println(this.getName() + " tüm düşmanları yendiniz !");
-                return true;
-            }
+        if (selectCase.equals("S") && (combat(obsNumber))){
+            System.out.println(this.getName() + " tüm düşmanları yendiniz !");
+            return true;
         }
-        if(this.getPlayer().getHealth() < 0){
+        if(this.getPlayer().getHealth() <= 0){
             System.out.println("Öldünüz !");
             return false;
         }
@@ -38,7 +36,7 @@ public class BattleLoc extends Location{
         for(int i = 1; i <= obsNumber; i++){
             this.getObstacle().setHealth(this.getObstacle().getOrijinalHealth());
             playerStats();
-            obstacleStats();
+            obstacleStats(i);
             while ((this.getPlayer().getHealth() > 0) && (this.getObstacle().getHealth() > 0)){
                 System.out.println("<V>ur veya <K>aç");
                 String selectCombat = input.nextLine().toUpperCase();
@@ -58,10 +56,20 @@ public class BattleLoc extends Location{
                                 obstacleDamage);
                         afterHit();
                     }
+                }else{
+                    return false;
                 }
             }
+            if (this.getObstacle().getHealth() < this.getPlayer().getHealth()){
+                System.out.println("Düşmanı yendiniz !");
+                System.out.println(this.getObstacle().getAward() + " para kazandınız !");
+                this.getPlayer().setMoney(this.getPlayer().getMoney() + this.getObstacle().getHealth());
+                System.out.println("Güncel paranız : " + this.getPlayer().getMoney());
+
+            }else
+                return false;
         }
-        return false;
+        return true;
     }
 
     public void afterHit(){
@@ -83,9 +91,9 @@ public class BattleLoc extends Location{
         System.out.println();
     }
 
-    public void obstacleStats(){
+    public void obstacleStats(int i){
         System.out.println();
-        System.out.println(this.getObstacle().getName() + " Değerleri");
+        System.out.println(i + "." + this.getObstacle().getName() + " Değerleri");
         System.out.println("----------------------------------");
         System.out.println("Sağlık : " + this.getObstacle().getHealth());
         System.out.println("Hasar : " + this.getObstacle().getDamage());
